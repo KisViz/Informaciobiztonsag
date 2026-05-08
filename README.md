@@ -1,6 +1,8 @@
 # SQL
 https://www.inf.u-szeged.hu/~pengoe/sqli1.html
 
+ctrl + u -> az oldal forráskódja
+
 ### Bejelentkezés (zh-n jelszó kitalálás?):
 - SQLite
     - ' OR 1=1;--
