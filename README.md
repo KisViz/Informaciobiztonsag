@@ -26,11 +26,16 @@ ctrl + u -> az oldal forráskódja
 
 ### Innen az md5-öt decryptelni kell
 - https://md5decrypt.net/en/
-- Már csak be kell jelentkezni a jó jelszóval és kész
+- Kijelentkezés, be kell jelentkezni a jó jelszóval és kész
 
 # C
 chmod a+x ABCDEFG.prog
+
 ./ABCDEFG.prog
+
+sérülékenységeket keresek a porgramomban, elsődlegesen  egész túlcordulást és buffer overflow-t. tudnál nekem segíteni ezeket megtalálni?
+
+a program:
 
 
 # HTML átírogatás
@@ -39,4 +44,4 @@ chmod a+x ABCDEFG.prog
 # nmap
 nmap 10.6.12.105 -p 30000-
 
-ncat 10.6.12.105 kapott_ipcím
+ncat 10.6.12.105 kapott_port
